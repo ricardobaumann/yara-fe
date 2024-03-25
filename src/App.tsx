@@ -3,6 +3,7 @@ import './App.css';
 import {Box, Tab, Tabs} from "@mui/material";
 import ProductView from "./views/product";
 import {ApolloClient, ApolloProvider, InMemoryCache} from "@apollo/client";
+import WarehouseView from "./views/warehouse";
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000/graphql',
@@ -29,6 +30,11 @@ function App() {
       {currentTabIndex === 0 && (
           <>
             <ProductView/>
+          </>
+      )}
+      {currentTabIndex === 1 && (
+          <>
+            <WarehouseView/>
           </>
       )}
     </ApolloProvider>
