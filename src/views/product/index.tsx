@@ -1,19 +1,53 @@
-import React, {useState} from "react";
-import {Button, FormControl, FormHelperText, Input, InputLabel, MenuItem, Select, Stack} from "@mui/material";
+import React, {useEffect, useState} from "react";
+import {
+    Button,
+    FormControl,
+    FormHelperText,
+    Input,
+    InputLabel,
+    MenuItem,
+    Paper,
+    Select,
+    Stack, Table, TableBody, TableCell,
+    TableContainer, TableHead, TableRow
+} from "@mui/material";
 import {toast, ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import {ApolloError,useMutation} from "@apollo/client";
-import CREATE_PRODUCT from "../../mutations/product";
+import {ApolloError, useMutation, useQuery} from "@apollo/client";
+import {CREATE_PRODUCT, GET_PRODUCTS} from "../../graphschema/product";
+
+interface Column {
+    id: 'productName' | 'productType';
+    label: string;
+    minWidth?: number;
+    align?: 'right';
+    format?: (value: number) => string;
+}
+
+const columns: readonly Column[] = [
+    { id: 'productName', label: 'ProductName', minWidth: 170 },
+    { id: 'productType', label: 'ProductType', minWidth: 100 },
+];
+
+interface ProductData {
+    productName: string;
+    productType: string;
+}
+
 
 const ProductView = () => {
 
     const [productName, setProductName] = useState("");
     const [productType, setProductType] = useState("STANDARD");
     const [addProduct] = useMutation(CREATE_PRODUCT);
+    const { loading, error, data, refetch } = useQuery(GET_PRODUCTS);
+
     const resetForm = () => {
         setProductType("STANDARD");
         setProductName("");
     };
+
+
     const save = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         addProduct({variables: {
@@ -34,7 +68,10 @@ const ProductView = () => {
             } else {
                 toast("An unknown error occurred: "+reason.error);
             }
-        }).finally(() => resetForm());
+        }).finally(() => {
+            resetForm();
+            refetch();
+        });
     };
     return <>
         <p>Add a new product</p>
@@ -76,6 +113,52 @@ const ProductView = () => {
                 </FormControl>
             </Stack>
         </form>
+        <p>Product List</p>
+        <Paper sx={{ width: '40%', overflow: 'hidden' }}>
+            <TableContainer sx={{ maxHeight: 440 }}>
+                <Table stickyHeader aria-label="sticky table">
+                    <TableHead>
+                        <TableRow>
+                            {columns.map((column) => (
+                                <TableCell
+                                    key={column.id}
+                                    align={column.align}
+                                    style={{ minWidth: column.minWidth }}
+                                >
+                                    {column.label}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {data.getProducts
+                            .map((dataRow: any):ProductData=> {
+                                return {
+                                    productName: dataRow['productName'],
+                                    productType: dataRow['productType']
+                                }
+                            })
+                            .map((row: ProductData) => {
+                                return (
+                                    <TableRow hover role="checkbox" tabIndex={-1} key={row.productName}>
+                                        {columns.map((column) => {
+                                            const value = row[column.id];
+                                            return (
+                                                <TableCell key={column.id} align={column.align}>
+                                                    {column.format && typeof value === 'number'
+                                                        ? column.format(value)
+                                                        : value}
+                                                </TableCell>
+                                            );
+                                        })}
+                                    </TableRow>
+                                );
+                            })}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+
+        </Paper>
     </>
 }
 
