@@ -1,26 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useState} from 'react';
 import './App.css';
+import {Box, Tab, Tabs} from "@mui/material";
+import ProductView from "./views/product";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+  const [currentTabIndex, setCurrentTabIndex] = useState(0);
+
+
+  const handleChange = (newValue: number) => {
+    setCurrentTabIndex(newValue);
+  };
+
+  return <>
+    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+      <Tabs value={currentTabIndex} onChange={(event, newValue) => handleChange(newValue)} aria-label="basic tabs example">
+        <Tab label="Products"/>
+        <Tab label="Warehouse"/>
+      </Tabs>
+    </Box>
+    {currentTabIndex === 0 && (
+        <>
+          <ProductView/>
+        </>
+    )}
+  </>
 }
 
 export default App;
