@@ -1,50 +1,70 @@
 import React, {useState} from "react";
-import {Button, FormControl, FormHelperText, Input, InputLabel, MenuItem, Select, Stack} from "@mui/material";
-import {ApolloError, useMutation, useQuery} from "@apollo/client";
-import {CREATE_TRANSACTIONS, GET_PRODUCTS, GET_WAREHOUSES} from "../../../graphschema/product";
-import {toast, ToastContainer} from "react-toastify";
+import {
+    Button,
+    FormControl,
+    FormHelperText,
+    Input,
+    InputLabel,
+    MenuItem, Paper,
+    Select,
+    Stack, Table, TableBody, TableCell,
+    TableContainer, TableHead, TableRow
+} from "@mui/material";
+import {useQuery} from "@apollo/client";
+import {GET_PRODUCTS, GET_WAREHOUSES, LIST_TRANSACTIONS} from "../../../graphschema/product";
+import {ToastContainer} from "react-toastify";
+import {TransactionsFormParams} from "./types";
+import {toToastItem} from "react-toastify/dist/utils";
 
-const TransactionsForm = () => {
+interface Column {
+    id: 'id' | 'product' | 'amount';
+    label: string;
+    minWidth?: number;
+    align?: 'right';
+    format?: (value: number) => string;
+}
+
+const columns: readonly Column[] = [
+    { id: 'id', label: 'Id', minWidth: 170 },
+    { id: 'product', label: 'Product', minWidth: 100 },
+    { id: 'amount', label: 'Amount', minWidth: 100 },
+];
+
+interface TransactionsData {
+    id: string;
+    product: string;
+    amount: number;
+}
+
+const TransactionsForm = (params: TransactionsFormParams) => {
     const [product, setProduct] = useState<string>();
     const [amount, setAmount] = useState(0);
-    const [warehouse, setWarehouse] = useState<string>();
+    const [warehouseId, setWarehouseId] = useState<string>("");
 
-    const { loading, error, data, refetch } = useQuery(GET_WAREHOUSES);
-    const { loading: loadingProd, error: errorProd, data: dataProd, refetch: refetchProd } = useQuery(GET_PRODUCTS);
-    const [addTransactions] = useMutation(CREATE_TRANSACTIONS);
+    const { data: transactionsData, refetch } = useQuery(LIST_TRANSACTIONS, {
+        variables: {
+            warehouseId: warehouseId
+        }
+    });
+
+    const { data: warehouseData, refetch: refetchWarehouses } = useQuery(GET_WAREHOUSES);
+    const { data: productData } = useQuery(GET_PRODUCTS);
 
     const saveForm = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log(`Warehouse id: ${warehouse}`);
-        console.log(`Product id: ${product}`);
-        addTransactions({
-            variables : {
-                warehouseId: warehouse,
-                transactions : [
-                    {
-                        amount: amount,
-                        productId: product
-                    }
-                ]
-            }
-        }).then(value => {
-            if (value.data) {
-                toast(("Transaction created successfully"));
-            } else {
-                toast.error("Failed to create the transaction");
-            }
-        }).catch(reason => {
-            console.log(reason);
-            if (reason instanceof ApolloError) {
-                toast("Product failed to be created: "+(reason as ApolloError).message);
-            } else {
-                toast.error("An unknown error occurred: "+reason.error);
-            }
-        }).finally(() => {
-            refetch();
-            refetchProd();
-        })
+        params.save({
+            product: product!,
+            amount: amount,
+            warehouse: warehouseId!
+        });
+
+        refetchWarehouses();
+        refetch({
+            warehouseId: warehouseId
+        });
+
     };
+    let warehouseObj = warehouseData?.getWarehouses?.find((item: any) => item['id'] === warehouseId);
     return <>
         <form onSubmit={event => saveForm(event)}>
             <Stack spacing={2} width={"400px"}>
@@ -56,11 +76,17 @@ const TransactionsForm = () => {
                         id="warehouse-select"
                         label="Warehouse"
                         required={true}
-                        value={warehouse}
-                        onChange={event => setWarehouse(event.target.value)}
+                        value={warehouseId}
+                        onChange={event => {
+                            let id = event.target.value;
+                            setWarehouseId(id);
+                            refetch({
+                                warehouseId: id
+                            });
+                        }}
                     >
                         {
-                            data?.getWarehouses?.map((item: any) => {
+                            warehouseData?.getWarehouses?.map((item: any) => {
                                 return (
                                     <MenuItem value={item['id']}>
                                         {`${item['code']} - ${item['hazardous'] == null ? "Empty": (item['hazardous'] ? "Hazardous" : "Non hazardous")}`}
@@ -69,6 +95,17 @@ const TransactionsForm = () => {
                             })
                         }
                     </Select>
+                </FormControl>
+                    <p><strong>Warehouse Summary</strong></p>
+                    {warehouseId && (
+                        <>
+                            <p><strong>Code</strong>: {warehouseObj?.code}</p>
+                            <p><strong>Capacity</strong>: {warehouseObj?.capacity}</p>
+                            <p><strong>Occupied</strong>: {warehouseObj?.occupied}</p>
+                        </>
+                    )}
+                <FormControl>
+
                 </FormControl>
 
                 <FormControl>
@@ -82,7 +119,7 @@ const TransactionsForm = () => {
                         onChange={event => setProduct(event.target.value)}
                     >
                         {
-                            dataProd?.getProducts?.map((item: any) => {
+                            productData?.getProducts?.map((item: any) => {
                                 return (
                                     <MenuItem value={item['id']}>{`${item['productName']} - ${item['productType']}`}</MenuItem>
                                 );
@@ -103,10 +140,54 @@ const TransactionsForm = () => {
                 </FormControl>
 
                 <FormControl>
-                    <Button type={"submit"}>Create</Button>
+                    <Button type={"submit"}>Add</Button>
                 </FormControl>
             </Stack>
         </form>
+        <Paper sx={{width: '40%', overflow: 'hidden'}}>
+            <TableContainer sx={{maxHeight: 440}}>
+                <Table stickyHeader aria-label="sticky table">
+                    <TableHead>
+                        <TableRow>
+                            {columns.map((column) => (
+                                <TableCell
+                                    key={column.id}
+                                    align={column.align}
+                                    style={{minWidth: column.minWidth}}
+                                >
+                                    {column.label}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {transactionsData?.getTransactions?.map((dataRow: any): TransactionsData => {
+                            return {
+                                amount: dataRow['amount'],
+                                id: dataRow['id'],
+                                product: dataRow['product_id']
+                            }
+                        })?.map((row: TransactionsData) => {
+                            return (
+                                <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                                    {columns.map((column) => {
+                                        const value = row[column.id];
+                                        return (
+                                            <TableCell key={column.id} align={column.align}>
+                                                {column.format && typeof value === 'number'
+                                                    ? column.format(value)
+                                                    : value}
+                                            </TableCell>
+                                        );
+                                    })}
+                                </TableRow>
+                            );
+                        })}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+
+        </Paper>
         <ToastContainer/>
     </>
 }
