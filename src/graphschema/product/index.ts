@@ -18,3 +18,21 @@ export const GET_PRODUCTS = gql(`
       }
     }
 `)
+
+export const GET_WAREHOUSES = gql(`
+    query GetWarehouses {
+      getWarehouses {
+        id
+        code
+        capacity
+        hazardous
+        occupied
+      }
+    }
+`)
+
+export const CREATE_TRANSACTIONS = gql(`
+    mutation CreateTransactions($warehouseId: String!, $transactions: [TransactionInput]!) {
+      createTransactions(warehouseId: $warehouseId, transactions: $transactions)
+    }`
+)

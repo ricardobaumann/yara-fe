@@ -3,7 +3,7 @@ import './App.css';
 import {Box, Tab, Tabs} from "@mui/material";
 import ProductView from "./views/product";
 import {ApolloClient, ApolloProvider, InMemoryCache} from "@apollo/client";
-import WarehouseView from "./views/warehouse";
+import TransactionsView from "./views/warehouse";
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000/graphql',
@@ -24,7 +24,7 @@ function App() {
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={currentTabIndex} onChange={(event, newValue) => handleChange(newValue)} aria-label="basic tabs example">
           <Tab label="Products"/>
-          <Tab label="Warehouse"/>
+          <Tab label="Transactions"/>
         </Tabs>
       </Box>
       {currentTabIndex === 0 && (
@@ -32,9 +32,9 @@ function App() {
             <ProductView/>
           </>
       )}
-      {currentTabIndex === 1 && (
+      {currentTabIndex === 1 && (  
           <>
-            <WarehouseView/>
+            <TransactionsView/>
           </>
       )}
     </ApolloProvider>

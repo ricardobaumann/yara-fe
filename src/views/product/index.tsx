@@ -30,7 +30,7 @@ const ProductView = () => {
             if (reason instanceof ApolloError) {
                 toast("Product failed to be created: "+(reason as ApolloError).message);
             } else {
-                toast("An unknown error occurred: "+reason.error);
+                toast.error("An unknown error occurred: "+reason.error);
             }
         }).finally(() => {
             refetch();

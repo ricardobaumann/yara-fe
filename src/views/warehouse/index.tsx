@@ -1,8 +1,10 @@
 import React from "react";
+import TransactionsForm from "../../components/transactions/form";
 
 const WarehouseView = ()=> {
     return <>
-        <p>Warehouses</p>
+        <p>Transactions</p>
+        <TransactionsForm></TransactionsForm>
     </>
 }
 
