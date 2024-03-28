@@ -1,16 +1,20 @@
 import React, {useState} from "react";
 import {Button, FormControl, FormHelperText, Input, InputLabel, MenuItem, Select, Stack} from "@mui/material";
+import { Unstable_NumberInput as NumberInput } from '@mui/base';
 import {ToastContainer} from "react-toastify";
 import {ProductFormParams} from "./types";
 
 const ProductForm = (productFormParams: ProductFormParams)=> {
     const [productName, setProductName] = useState("");
     const [productType, setProductType] = useState("STANDARD");
+    const [sizePerUnit, setSizePerUnit] = useState(0);
+
     const save = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         productFormParams.save({
             productName: productName,
-            productType: productType
+            productType: productType,
+            sizePerUnit: sizePerUnit
         })
     };
     const resetForm = () => {
@@ -54,6 +58,16 @@ const ProductForm = (productFormParams: ProductFormParams)=> {
 
                     <FormHelperText id="product-name-helper-text">Product type impacts on where you can store
                         it</FormHelperText>
+                </FormControl>
+
+                <FormControl>
+                    <InputLabel htmlFor="size-per-unit-field">Size Per Unit</InputLabel>
+                    <Input id="size-per-unit-field" aria-describedby="size-per-unit-helper-text"
+                           value={sizePerUnit}
+                           required={true}
+                           inputProps={{type: 'number'}}
+                           onChange={event => setSizePerUnit(parseInt(event.target.value))}/>
+                    <FormHelperText id="size-per-unit-helper-text">How much space is takes?</FormHelperText>
                 </FormControl>
 
                 <FormControl>

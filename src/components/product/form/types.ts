@@ -5,4 +5,5 @@ export interface ProductFormParams {
 export interface ProductFormValues {
     productName: string,
     productType: string,
+    sizePerUnit: number
 }

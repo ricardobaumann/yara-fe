@@ -6,7 +6,7 @@ interface ProductListParams {
 }
 
 interface Column {
-    id: 'productName' | 'productType';
+    id: 'productName' | 'productType' | 'sizePerUnit';
     label: string;
     minWidth?: number;
     align?: 'right';
@@ -14,13 +14,15 @@ interface Column {
 }
 
 const columns: readonly Column[] = [
-    { id: 'productName', label: 'ProductName', minWidth: 170 },
-    { id: 'productType', label: 'ProductType', minWidth: 100 },
+    { id: 'productName', label: 'Product Name', minWidth: 170 },
+    { id: 'productType', label: 'Product Type', minWidth: 100 },
+    { id: 'sizePerUnit', label: 'Size Per Unit', minWidth: 100 },
 ];
 
 interface ProductData {
     productName: string;
     productType: string;
+    sizePerUnit: number;
 }
 
 
@@ -48,7 +50,8 @@ const ProductList = (params: ProductListParams) => {
                         {data?.getProducts?.map((dataRow: any): ProductData => {
                                 return {
                                     productName: dataRow['productName'],
-                                    productType: dataRow['productType']
+                                    productType: dataRow['productType'],
+                                    sizePerUnit: dataRow['sizePerUnit']
                                 }
                             })?.map((row: ProductData) => {
                                 return (

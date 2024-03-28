@@ -15,13 +15,14 @@ const ProductView = () => {
     const saveForm = (productFormValues: ProductFormValues) => {
         addProduct({variables: {
                 productName: productFormValues.productName,
-                productType: productFormValues.productType
+                productType: productFormValues.productType,
+                sizePerUnit: productFormValues.sizePerUnit
             }}).then(value => {
             if (value.data) {
                 toast("Product created successfully");
             } else {
                 if (value.errors) {
-                    toast("Product failed to be created");
+                    toast.error("Product failed to be created");
                 }
             }
         }).catch(reason => {
