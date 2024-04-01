@@ -4,9 +4,11 @@ import {Box, Tab, Tabs} from "@mui/material";
 import ProductView from "./views/product";
 import {ApolloClient, ApolloProvider, InMemoryCache} from "@apollo/client";
 import TransactionsView from "./views/warehouse";
+const backendURL = process.env.BACKEND_URL || 'http://localhost:4000/graphql';
+console.log('Backend URL:', backendURL);  // Use the environment variable as needed
 
 const client = new ApolloClient({
-  uri: 'http://localhost:4000/graphql',
+  uri: backendURL,
   cache: new InMemoryCache(),
 });
 
