@@ -78,7 +78,7 @@ const TransactionsForm = (params: TransactionsFormParams) => {
         await refetchWarehouses();
         await refetch({
             warehouseId: warehouseId
-        }).then(value => {
+        }).then(() => {
             warehouseObj = getSelectedWarehouse();
         });
     }
