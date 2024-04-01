@@ -1,6 +1,5 @@
 import React, {useState} from "react";
-import {Button, FormControl, FormHelperText, Input, InputLabel, MenuItem, Select, Stack} from "@mui/material";
-import { Unstable_NumberInput as NumberInput } from '@mui/base';
+import {Button, FormControl, FormHelperText, Grid, Input, InputLabel, MenuItem, Select, Stack} from "@mui/material";
 import {ToastContainer} from "react-toastify";
 import {ProductFormParams} from "./types";
 
@@ -23,58 +22,59 @@ const ProductForm = (productFormParams: ProductFormParams)=> {
     };
 
     return <>
-        <p>Add a new product</p>
         <form onSubmit={event => {
             save(event);
             resetForm();
         }}>
-            <Stack spacing={2} width={"400px"}>
+            <Grid container justifyContent={"center"} sx={{paddingTop: '50px'}}>
+                <Stack spacing={2} width={"400px"}>
+                    <h2>Add a new product</h2>
+                    <FormControl>
+                        <InputLabel htmlFor="product-name-field">Product Name</InputLabel>
+                        <Input id="product-name-field" aria-describedby="product-name-helper-text"
+                               value={productName}
+                               required={true}
+                               onChange={event => setProductName(event.target.value)}/>
+                        <FormHelperText id="product-name-helper-text">Product name is unique</FormHelperText>
+                    </FormControl>
 
-                <FormControl>
-                    <InputLabel htmlFor="product-name-field">Product Name</InputLabel>
-                    <Input id="product-name-field" aria-describedby="product-name-helper-text"
-                           value={productName}
-                           required={true}
-                           onChange={event => setProductName(event.target.value)}/>
-                    <FormHelperText id="product-name-helper-text">Product name is unique</FormHelperText>
-                </FormControl>
+                    <FormControl>
+                        <InputLabel htmlFor="product-type-field">Product Type</InputLabel>
 
-                <FormControl>
-                    <InputLabel htmlFor="product-type-field">Product Type</InputLabel>
+                        <Select
+                            labelId="product-type-select-label"
+                            id="product-type-field"
+                            value={productType}
+                            required={true}
+                            defaultValue={"STANDARD"}
+                            label="Product Type"
+                            onChange={event => setProductType(event.target.value)}>
 
-                    <Select
-                        labelId="product-type-select-label"
-                        id="product-type-field"
-                        value={productType}
-                        required={true}
-                        defaultValue={"STANDARD"}
-                        label="Product Type"
-                        onChange={event => setProductType(event.target.value)}>
+                            <MenuItem value={"STANDARD"}>Standard</MenuItem>
+                            <MenuItem value={"HAZARDOUS"}>Hazardous</MenuItem>
 
-                        <MenuItem value={"STANDARD"}>Standard</MenuItem>
-                        <MenuItem value={"HAZARDOUS"}>Hazardous</MenuItem>
+                        </Select>
 
-                    </Select>
+                        <FormHelperText id="product-name-helper-text">Product type impacts on where you can store
+                            it</FormHelperText>
+                    </FormControl>
 
-                    <FormHelperText id="product-name-helper-text">Product type impacts on where you can store
-                        it</FormHelperText>
-                </FormControl>
+                    <FormControl>
+                        <InputLabel htmlFor="size-per-unit-field">Size Per Unit</InputLabel>
+                        <Input id="size-per-unit-field" aria-describedby="size-per-unit-helper-text"
+                               value={sizePerUnit}
+                               required={true}
+                               inputProps={{type: 'number'}}
+                               onChange={event => setSizePerUnit(parseInt(event.target.value))}/>
+                        <FormHelperText id="size-per-unit-helper-text">How much space is takes?</FormHelperText>
+                    </FormControl>
 
-                <FormControl>
-                    <InputLabel htmlFor="size-per-unit-field">Size Per Unit</InputLabel>
-                    <Input id="size-per-unit-field" aria-describedby="size-per-unit-helper-text"
-                           value={sizePerUnit}
-                           required={true}
-                           inputProps={{type: 'number'}}
-                           onChange={event => setSizePerUnit(parseInt(event.target.value))}/>
-                    <FormHelperText id="size-per-unit-helper-text">How much space is takes?</FormHelperText>
-                </FormControl>
-
-                <FormControl>
-                    <Button type={"submit"}>Add new product</Button>
-                    <ToastContainer/>
-                </FormControl>
-            </Stack>
+                    <FormControl>
+                        <Button type={"submit"}>Add new product</Button>
+                        <ToastContainer/>
+                    </FormControl>
+                </Stack>
+            </Grid>
         </form>
     </>
 }

@@ -37,6 +37,8 @@ export const LIST_TRANSACTIONS = gql(`
         id
         product_id
         amount
+        transactionDate
+        sizePerUnit
       }
     }
 `)

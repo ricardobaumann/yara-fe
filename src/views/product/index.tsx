@@ -10,7 +10,7 @@ import {ProductFormValues} from "../../components/product/form/types";
 const ProductView = () => {
 
     const [addProduct] = useMutation(CREATE_PRODUCT);
-    const { loading, error, data, refetch } = useQuery(GET_PRODUCTS);
+    const { data, refetch } = useQuery(GET_PRODUCTS);
 
     const saveForm = (productFormValues: ProductFormValues) => {
         addProduct({variables: {

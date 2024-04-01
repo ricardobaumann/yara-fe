@@ -21,8 +21,12 @@ function App() {
 
   return <>
     <ApolloProvider client={client}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={currentTabIndex} onChange={(event, newValue) => handleChange(newValue)} aria-label="basic tabs example">
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}
+           display={"flex"}
+           justifyContent={"center"}
+           alignContent={"center"}>
+        <Tabs value={currentTabIndex}
+              onChange={(event, newValue) => handleChange(newValue)} aria-label="basic tabs example">
           <Tab label="Products"/>
           <Tab label="Transactions"/>
         </Tabs>

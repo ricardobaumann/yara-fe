@@ -1,22 +1,22 @@
 import React from "react";
 import TransactionsForm from "../../components/transactions/form";
-import {ApolloError, useMutation, useQuery} from "@apollo/client";
-import {CREATE_TRANSACTIONS, LIST_TRANSACTIONS} from "../../graphschema/product";
+import {ApolloError, useMutation} from "@apollo/client";
+import {CREATE_TRANSACTIONS} from "../../graphschema/product";
 import {TransactionsFormValues} from "../../components/transactions/form/types";
 import {toast} from "react-toastify";
-import TransactionsList from "../../components/transactions/list";
 
 const WarehouseView = ()=> {
     const [addTransactions] = useMutation(CREATE_TRANSACTIONS);
 
-    const save = (transactionsFormValues: TransactionsFormValues) => {
-        addTransactions({
+    const save = async (transactionsFormValues: TransactionsFormValues) => {
+        await addTransactions({
             variables : {
                 warehouseId: transactionsFormValues.warehouse,
                 transactions : [
                     {
                         amount: transactionsFormValues.amount,
-                        productId: transactionsFormValues.product
+                        productId: transactionsFormValues.product,
+                        transactionDate: transactionsFormValues.transactionDate
                     }
                 ]
             }
@@ -36,7 +36,6 @@ const WarehouseView = ()=> {
         })
     };
     return <>
-        <p>Transactions</p>
         <TransactionsForm save={productFormValues => save(productFormValues)}/>
     </>
 }

@@ -5,5 +5,6 @@ export interface TransactionsFormParams {
 export interface TransactionsFormValues {
     warehouse: string,
     product: string,
-    amount: number
+    amount: number,
+    transactionDate: Date
 }
