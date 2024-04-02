@@ -13,4 +13,4 @@ In order to run it, please ensure you have both required backend services up and
 * [yara-rest](https://github.com/ricardobaumann/yara-rest)
 * [yara-graphql](https://github.com/ricardobaumann/yara-graphql)
 
-Then, on your local, run `npm start`. App should be available on http://localhost:3000.
+Then, on your local, run `npm install && npm start`. App should be available on http://localhost:3000.
